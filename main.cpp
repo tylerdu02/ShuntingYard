@@ -130,7 +130,7 @@ void infixToPostfix(char infix[20]) {
     }
   }
   // pop everything from the stack to the output queue
-  while(headStack!=nullptr){
+  while(headStack!=nullptr) {
     enqueue(tailQueue,pop(headStack));
   }
   // print out stack and output queue 
@@ -141,15 +141,15 @@ void infixToPostfix(char infix[20]) {
   convertToTree(headQueue);
 }
 
-void convertToTree(Node* headPrev){
+void convertToTree(Node* headPrev) {
   
   // create a head pointer
   BinaryTreeNode* head = nullptr;
-  while(headPrev!=nullptr){
+  while(headPrev!=nullptr) {
     Node* n = pop(headPrev);
     BinaryTreeNode* bn = new BinaryTreeNode(n->charn, n->number);
     char c = bn->getChar()[0];
-    if(c==42 || c==43 || c==45 || c==47 || c==94){
+    if(c==42 || c==43 || c==45 || c==47 || c==94) {
       bn->setLeft(treePop(head));
       bn->setRight(treePop(head));
     }
@@ -162,16 +162,148 @@ void convertToTree(Node* headPrev){
   char fix[20];
   cin >> fix;
   cin.get();
-  if(fix[1]=='n'){
+  if(fix[1]=='n') {
     infix(head);
   }
-  else if(fix[1]=='r'){
+  else if(fix[1]=='r') {
     prefix(head);
   }
-  else if(fix[1]=='o'){
+  else if(fix[1]=='o') {
     postfix(head);
   }
-  else{
+  else {
     cout << "Invalid type" << endl;
   }
+}
+
+// print out the current head before calling for left and right
+void prefix(BinaryTreeNode* head) {
+  if(head!=nullptr) {
+    for(int a = 0; a < head->getNumber(); a++) {
+      cout << head->getChar()[a];
+    }
+    prefix(head->getLeft());
+    prefix(head->getRight());
+  }
+}
+
+void infix(BinaryTreeNode* head) {
+  if(head!=nullptr) {
+    char c = head->getChar()[0];
+    if(c==42 || c==43 || c==45 || c==47 || c==94) {
+      cout << "(";
+    }
+    infix(head->getLeft());
+    for(int a = 0; a < head->getNumber(); a++) {
+      cout << head->getChar()[a];
+    }
+    infix(head->getRight());
+    if(c==42 || c==43 || c==45 || c==47 || c==94) {
+      cout << ")";
+    }
+  }
+}
+
+void postfix(BinaryTreeNode* head) {
+  if(head!=nullptr) {
+    postfix(head->getLeft());
+    postfix(head->getRight());
+    for(int a = 0; a < head->getNumber(); a++) {
+      cout << head->getChar()[a];
+    }
+  }
+}
+
+BinaryTreeNode* treePop(BinaryTreeNode* &head) {
+  BinaryTreeNode* temp = head;
+  head = temp->getNext();
+  temp->setNext(nullptr);
+  return temp;
+}
+
+void printTreeStack(BinaryTreeNode* head) {
+  if(head!=nullptr) {
+    for(int a = 0; a < head->getNumber(); a++) {
+      cout << head->getChar()[a];
+    }
+    cout << endl;
+    printTreeStack(head->getNext());
+  }
+}
+
+void treePush(BinaryTreeNode* &head, BinaryTreeNode* &n) {
+  if(head==nullptr) {
+    head = n;
+  }
+  else{
+    BinaryTreeNode* temp = head;
+    head = n;
+    n->setNext(temp);
+  }
+}
+
+void queue(Node* head) {
+  if(head!=nullptr){
+    for(int a = 0; a < head->number; a++) {
+      cout << head->charn[a];
+    }
+    cout << endl;
+    queue(head->next);
+  }
+}
+
+void stack(Node* head) {
+  if(head!=nullptr) {
+    cout << head->charn[0] << endl;
+    stack(head->next);
+  }
+}
+
+int numNumber(char infix[20], int index) {
+  int count = 0;
+  for(int a = index; a < strlen(infix); a++) {
+    int b = (int)infix[a];
+    if(b==42 || b==41 || b==40 || b==43 || b==45 || b==47 || b==94) {
+      break;
+    }
+    count++;
+  }
+  return count;
+}
+
+void enqueue(Node* &tail, Node* n) {
+  Node* temp = tail;
+  tail = n;
+  temp->next = tail;
+  tail->next = nullptr;
+}
+
+Node* dequeue(Node* &head) {
+  Node* temp = head;
+  head = temp->next;
+  temp->next = nullptr;
+  return temp;
+}
+
+void push(Node* &head, Node* n) {
+  if(head==nullptr) {
+    head = n;
+  }
+  else{
+    Node* temp = head;
+    n->next = temp;
+    head = n;
+  }
+}
+
+Node* pop(Node* &head) {
+  Node* temp = head;
+  head = temp->next;
+  temp->next = nullptr;
+  return temp;
+}
+
+// return the head
+Node* peek(Node* head) {
+  return head;
 }
